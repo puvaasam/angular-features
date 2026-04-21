@@ -1,0 +1,107 @@
+<section class="page">
+  <header class="header">
+    <h1>Education Institution User Management</h1>
+    <p>Create, update, delete, and review institution users.</p>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="alert" role="alert">{{ errorMessage() }}</p>
+  }
+
+  <section class="panel">
+    <h2>{{ editingUserId() === null ? 'Add New User' : 'Edit User' }}</h2>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="form-grid">
+      <label>
+        First Name
+        <input type="text" formControlName="firstName" />
+      </label>
+      @if (hasFieldError('firstName')) {
+        <small class="error">First name should contain at least 2 characters.</small>
+      }
+
+      <label>
+        Last Name
+        <input type="text" formControlName="lastName" />
+      </label>
+      @if (hasFieldError('lastName')) {
+        <small class="error">Last name should contain at least 2 characters.</small>
+      }
+
+      <label>
+        Gender
+        <select formControlName="gender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </label>
+      @if (hasFieldError('gender')) {
+        <small class="error">Gender is required.</small>
+      }
+
+      <label>
+        Password
+        <input type="password" formControlName="password" />
+      </label>
+      @if (hasFieldError('password')) {
+        <small class="error">Password must contain at least 6 characters.</small>
+      }
+
+      <label>
+        Address ID
+        <input type="number" formControlName="addressId" min="1" />
+      </label>
+      @if (hasFieldError('addressId')) {
+        <small class="error">Address ID should be a number greater than 0.</small>
+      }
+
+      <div class="actions">
+        <button type="submit">{{ buttonLabel() }}</button>
+        @if (editingUserId() !== null) {
+          <button type="button" class="secondary" (click)="cancelEdit()">Cancel</button>
+        }
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>All Users</h2>
+
+    @if (isLoading()) {
+      <p>Loading users...</p>
+    } @else if (users().length === 0) {
+      <p>No users available.</p>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <caption class="sr-only">
+            List of registered users
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Gender</th>
+              <th scope="col">Address ID</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.userId ?? user.firstName) {
+              <tr>
+                <td>{{ user.firstName }} {{ user.lastName }}</td>
+                <td>{{ user.gender }}</td>
+                <td>{{ user.addressId }}</td>
+                <td class="row-actions">
+                  <button type="button" class="secondary" (click)="editUser(user)">Edit</button>
+                  <button type="button" class="danger" (click)="deleteUser(user.userId)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</section>
