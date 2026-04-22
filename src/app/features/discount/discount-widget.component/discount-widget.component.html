@@ -1,0 +1,20 @@
+<article class="discount-card">
+      <h3>Special Offer!</h3>
+      
+      <!-- 1. @let syntax: Calculates values directly in the template! -->
+      <!-- Useful for avoiding repeated calculations or keeping template logic local -->
+      @let discountRate = 0.20;
+      @let discountAmount = price() * discountRate;
+      @let finalPrice = price() - discountAmount;
+      
+      <div class="price-details">
+        <p>Original Price: <span>\${{ price() }}</span></p>
+        <!-- Reusing the @let variable here -->
+        <p>Discount ({{ discountRate * 100 }}%): <span>-\${{ discountAmount }}</span></p>
+        <!-- And reusing the finalPrice @let variable here -->
+        <p class="final">Final Price: <span>\${{ finalPrice }}</span></p>
+      </div>
+
+      <!-- 2. output(): Emitting the value back to the parent -->
+      <button type="button" (click)="apply.emit(finalPrice)">Claim Discount</button>
+    </article>

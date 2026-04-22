@@ -1,0 +1,6 @@
+.discount-card { border: 1px dashed #10b981; border-radius: 10px; padding: 1.5rem; background: #ecfdf5; margin-top: 1rem; max-width: 400px; }
+    h3 { margin: 0 0 1rem; color: #047857; }
+    .price-details p { margin: 0.5rem 0; display: flex; justify-content: space-between; }
+    .final { font-weight: bold; font-size: 1.2rem; color: #1d4ed8; border-top: 1px solid #a7f3d0; padding-top: 0.5rem; margin-top: 0.5rem; }
+    button { border: 0; border-radius: 8px; padding: 0.75rem 1rem; background: #10b981; color: #fff; font-weight: 600; cursor: pointer; width: 100%; margin-top: 1rem;}
+    button:hover { background: #059669; }
