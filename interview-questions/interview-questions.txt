@@ -1,0 +1,81 @@
+
+
+### Here is a curated list of Angular interview questions, heavily focused on modern Angular (v15–v18+) since you have been learning these exact features, along with some core classic questions.
+
+Modern Angular (Signals & Control Flow)
+
+- What are Angular Signals, and how do they differ from RxJS Observables? Signals hold a synchronous value and notify consumers when they change, providing fine-grained reactivity without Zone.js . RxJS handles asynchronous event streams. Signals don't require subscribing/unsubscribing.
+- How does the new input() function differ from the @Input() decorator? input() returns a read-only Signal, meaning you can easily react to changes using computed() or effect() . @Input() requires ngOnChanges or setters to track changes.
+- Explain @defer (Deferrable Views) and its use cases. @defer allows you to lazily load chunks of a template (and their child components) only when a specific condition is met (e.g., on viewport , on interaction ). This drastically reduces the initial bundle size.
+- What is the @let syntax used for in templates? It allows you to declare local template variables to store the result of complex expressions or pipe transformations, preventing repeated calculations during change detection.
+- What are Standalone Components, and why did Angular introduce them? Components marked with standalone: true specify their own imports directly, eliminating the need for NgModules . This makes the framework easier to learn, reduces boilerplate, and improves tree-shaking.
+Architecture & Dependency Injection
+
+- What is the difference between inject() and constructor injection? inject(MyService) is a modern function-based approach. It is cleaner, works perfectly with inheritance (no need to call super() with dependencies), and can be used outside of classes (like in functional guards or interceptors).
+- How do Functional Interceptors differ from Class-based Interceptors? Functional interceptors ( HttpInterceptorFn ) are simple functions instead of classes implementing an interface. They are configured via withInterceptors([]) and are much less boilerplate-heavy.
+- Explain Angular's Change Detection and OnPush strategy. By default, Angular checks the entire component tree when an event occurs. ChangeDetectionStrategy.OnPush tells Angular to only check the component when its @Input() references change, an event originates from the component, or a Signal/AsyncPipe updates.
+RxJS & Asynchronous Programming
+
+- How do you prevent memory leaks in Angular components? By unsubscribing from Observables. Modern approaches include using the AsyncPipe in the template, using the takeUntilDestroyed() RxJS operator, or switching to Signals (which don't leak).
+- What is the difference between switchMap , mergeMap , and concatMap ?
+  - switchMap : Cancels the previous request if a new one arrives (great for search bars).
+  - mergeMap : Runs all requests concurrently (great for independent saves).
+  - concatMap : Queues requests to run one after another (great for sequential updates).
+Routing & Forms
+
+- How do Functional Route Guards work? Instead of writing a class that implements CanActivate , you write a simple function ( CanActivateFn ) that uses inject(Router) or inject(AuthService) to return a boolean or UrlTree .
+- What is the difference between Template-Driven and Reactive Forms? Template-Driven forms rely on directives ( ngModel ) and HTML validation attributes. Reactive forms ( FormGroup , FormControl ) are defined in the TypeScript class, making them highly testable, immutable, and scalable for complex scenarios.
+If you want to practice, feel free to pick any of these questions and try answering it, or ask me to dive deeper into the technical details of a specific answer!
+
+
+----------------------
+
+### how angular update the dom and re-render the view for input change or event
+
+
+
+Understanding how Angular updates the DOM and re-renders the view is a fantastic question, especially because Angular is currently undergoing a massive architectural shift with the introduction of Signals (Zoneless Angular).
+
+Here is exactly how Angular detects changes and updates the DOM, broken down into the Traditional Way (Zone.js) and the Modern Way (Signals).
+
+### 1. The Traditional Way (Zone.js & Dirty Checking)
+For years, Angular relied on a library called Zone.js to know when something happened.
+
+How it works:
+
+1. Monkey Patching: When Angular starts, Zone.js "monkey patches" (overrides) almost every asynchronous API in the browser. This includes:
+   - DOM Events ( click , keyup , submit , etc.)
+   - Timers ( setTimeout , setInterval )
+   - Network Requests ( XMLHttpRequest , fetch )
+2. The Trigger: When you click a button (e.g., (click)="increment()" ), Zone.js intercepts the event, lets your component run the increment() method, and then immediately tells Angular: "Hey, some asynchronous event just finished. State might have changed!"
+3. Top-Down Dirty Checking (Change Detection Cycle): Angular then starts at the very top (the root component) and walks down the entire component tree.
+   - It checks every single expression in every template (e.g., {{ count }} ).
+   - It compares the old value (from the last check) with the new value .
+   - If oldValue !== newValue , it marks that part of the DOM as "dirty" and updates the actual HTML element.
+The Problem with Zone.js: Angular doesn't know what changed, only that something might have changed. Checking the entire component tree for every single click or HTTP response is computationally expensive.
+
+### 2. The Optimization: OnPush Strategy
+To fix the performance issues of checking everything, Angular introduced ChangeDetectionStrategy.OnPush . You are actually using this in your DashboardComponent and DiscountWidgetComponent !
+
+How OnPush works: Instead of checking the component every time anything happens in the app, Angular skips the component (and its children) unless one of three things happens:
+
+1. An @Input() reference changes (e.g., [price]="150" changes to 200 ).
+2. An event originates from inside the component itself (e.g., a button click inside the component).
+3. You explicitly tell Angular to check it (using ChangeDetectorRef.markForCheck() or the async pipe).
+This makes the app much faster because Angular can prune entire branches of the component tree during the Change Detection Cycle.
+
+### 3. The Modern Way: Signals (Fine-Grained Reactivity)
+With Angular v17+, Signals completely change the game. This is the new standard, and it is what you are using with input() , signal() , and computed() .
+
+How Signals work (Zoneless Concept): Signals are wrappers around values that notify interested consumers when they change.
+
+1. The Dependency Graph: When Angular renders a template, it tracks exactly which Signals are read.
+   - For example: <p>{{ price() }}</p> tells Angular that this specific <p> tag depends on the price signal.
+2. The Trigger: When you update a Signal (e.g., this.price.set(200) ), the Signal immediately notifies Angular: "Hey, my value changed. Please update anyone who cares."
+3. Targeted DOM Updates: Angular doesn't need Zone.js anymore. It doesn't need to guess if something changed, and it doesn't need to walk down the entire component tree comparing old and new values.
+   - Because Angular knows exactly which template nodes depend on the price signal, it goes directly to that specific <p> tag and updates the text.
+### Summary: What happens when [price]="150" changes?
+- Old Way ( @Input + Zone.js): The parent changes the value. Zone.js triggers a global check. Angular walks down the tree, finds the child component, sees the @Input changed, runs ngOnChanges , checks the child's template, finds {{ price }} , sees it's different, and updates the DOM.
+- New Way ( input() Signal): The parent updates the Signal. The Signal instantly notifies the specific text node in the DOM that depends on it. The DOM updates. (No global tree walking, no Zone.js required).
+
+----------------

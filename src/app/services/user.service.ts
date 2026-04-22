@@ -9,45 +9,27 @@ import { User, UserPayload, LoginRequest, LoginResponse } from '../models/user.m
 export class UserService {
   private readonly http = inject(HttpClient);
   private readonly apiBaseUrl = '/v1';
-  private readonly authorizationToken = 'Bearer demo-token';
-
-  private buildHeaders(extra?: Record<string, string>): HttpHeaders {
-    return new HttpHeaders({
-      'x-trace-id': crypto.randomUUID(),
-      'x-authorization': this.authorizationToken,
-      Accept: 'application/json',
-      ...extra
-    });
-  }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiBaseUrl}/login`, credentials, {
-      headers: this.buildHeaders()
-    });
+    return this.http.post<LoginResponse>(`${this.apiBaseUrl}/login`, credentials);
   }
 
   getAll(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiBaseUrl}/users`, {
-      headers: this.buildHeaders()
-    });
+    return this.http.get<User[]>(`${this.apiBaseUrl}/users`);
   }
 
   create(payload: UserPayload): Observable<User> {
-    return this.http.post<User>(`${this.apiBaseUrl}/user`, payload, {
-      headers: this.buildHeaders()
-    });
+    return this.http.post<User>(`${this.apiBaseUrl}/user`, payload);
   }
 
   update(payload: User): Observable<User> {
-    return this.http.put<User>(`${this.apiBaseUrl}/user`, payload, {
-      headers: this.buildHeaders()
-    });
+    return this.http.put<User>(`${this.apiBaseUrl}/user`, payload);
   }
 
   delete(id: number): Observable<void> {
     return this.http.request<void>('DELETE', `${this.apiBaseUrl}/user/${id}`, {
       body: {},
-      headers: this.buildHeaders({ 'Content-Type': 'application/json' })
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
 }
