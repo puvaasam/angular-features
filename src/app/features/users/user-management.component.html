@@ -55,6 +55,17 @@
         <small class="error">Address ID should be a number greater than 0.</small>
       }
 
+      <label>
+        Role
+        <select formControlName="role">
+          <option value="Standard">Standard</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </label>
+      @if (hasFieldError('role')) {
+        <small class="error">Role is required.</small>
+      }
+
       <div class="actions">
         <button type="submit">{{ buttonLabel() }}</button>
         @if (editingUserId() !== null) {
@@ -66,42 +77,46 @@
 
   <section class="panel">
     <h2>All Users</h2>
-
-    @if (isLoading()) {
-      <p>Loading users...</p>
-    } @else if (users().length === 0) {
-      <p>No users available.</p>
-    } @else {
-      <div class="table-wrapper">
-        <table>
-          <caption class="sr-only">
-            List of registered users
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Gender</th>
-              <th scope="col">Address ID</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (user of users(); track user.userId ?? user.firstName) {
+    @defer(on viewport) {
+        @if (isLoading()) {
+        <p>Loading users...</p>
+      } @else if (users().length === 0) {
+        <p>No users available.</p>
+      } @else {
+        <div class="table-wrapper">
+          <table>
+            <caption class="sr-only">
+              List of registered users
+            </caption>
+            <thead>
               <tr>
-                <td>{{ user.firstName }} {{ user.lastName }}</td>
-                <td>{{ user.gender }}</td>
-                <td>{{ user.addressId }}</td>
-                <td class="row-actions">
-                  <button type="button" class="secondary" (click)="editUser(user)">Edit</button>
-                  <button type="button" class="danger" (click)="deleteUser(user.userId)">
-                    Delete
-                  </button>
-                </td>
+                <th scope="col">Name</th>
+                <th scope="col">Gender</th>
+                <th scope="col">Address ID</th>
+                <th scope="col">Actions</th>
               </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              @for (user of users(); track user.userId ?? user.firstName) {
+                <tr>
+                  <td>{{ user.firstName }} {{ user.lastName }}</td>
+                  <td>{{ user.gender }}</td>
+                  <td>{{ user.addressId }}</td>
+                  <td class="row-actions">
+                    <button type="button" class="secondary" (click)="editUser(user)">Edit</button>
+                    <button type="button" class="danger" (click)="deleteUser(user.userId)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    } @placeholder {
+      <p>Scroll to load gallery.</p>
     }
+    
   </section>
 </section>

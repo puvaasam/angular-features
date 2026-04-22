@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { User, UserPayload } from '../../models/user.model';
+import { User, UserPayload, UserRole } from '../../models/user.model';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -27,7 +27,8 @@ export class UserManagementComponent {
     lastName: ['', [Validators.required, Validators.minLength(2)]],
     gender: this.fb.nonNullable.control<'Male' | 'Female'>('Male', [Validators.required]),
     password: ['', [Validators.required, Validators.minLength(6)]],
-    addressId: [0, [Validators.required, Validators.min(1)]]
+    addressId: [0, [Validators.required, Validators.min(1)]],
+    role: this.fb.nonNullable.control<UserRole>('Standard', [Validators.required])
   });
 
   constructor() {
@@ -76,7 +77,8 @@ export class UserManagementComponent {
       lastName: user.lastName,
       gender: user.gender,
       password: user.password,
-      addressId: user.addressId
+      addressId: user.addressId,
+      role: user.role
     });
   }
 

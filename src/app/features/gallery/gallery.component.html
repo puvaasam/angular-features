@@ -1,0 +1,22 @@
+      <section class="panel">
+        <h2>Gallery</h2>
+
+        @defer(on viewport) {
+          @if (galleryResource.isLoading()) {
+            <p>Loading gallery...</p>
+          } @else if (galleryResource.error()) {
+            <p class="error" role="alert">Unable to load images from mock JSON.</p>
+          } @else {
+            <div class="gallery-grid">
+              @for (image of galleryResource.value() ?? []; track image.id) {
+                <figure class="card">
+                  <img [src]="image.url" [alt]="image.title" loading="lazy" width="240" height="160" />
+                  <figcaption>{{ image.title }}</figcaption>
+                </figure>
+              }
+            </div>
+          }
+        } @placeholder {
+          <p>Scroll to load gallery.</p>
+        }
+      </section>

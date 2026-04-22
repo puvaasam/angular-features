@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User, UserPayload } from '../models/user.model';
+import { User, UserPayload, LoginRequest, LoginResponse } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,12 @@ export class UserService {
       'x-authorization': this.authorizationToken,
       Accept: 'application/json',
       ...extra
+    });
+  }
+
+  login(credentials: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiBaseUrl}/login`, credentials, {
+      headers: this.buildHeaders()
     });
   }
 
