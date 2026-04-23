@@ -1,18 +1,24 @@
 import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-counter-widget',
   standalone: true,
+  imports: [MatCardModule, MatButtonModule],
   template: `
-    <article class="counter-card">
-      <h3>{{ label() }}</h3>
-      <p class="value">{{ count() }}</p>
-
-      <div class="actions">
-        <button type="button" (click)="increment()">Increment</button>
-        <button type="button" class="secondary" (click)="decrement()">Decrement</button>
-      </div>
-    </article>
+    <mat-card class="counter-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ label() }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="value">{{ count() }}</p>
+      </mat-card-content>
+      <mat-card-actions class="actions">
+        <button  class="primary" (click)="increment()">Increment</button>
+        <button  class="secondary" (click)="decrement()">Decrement</button>
+      </mat-card-actions>
+    </mat-card>
   `,
   styleUrl: './counter-widget.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
