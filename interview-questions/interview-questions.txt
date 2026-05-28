@@ -79,3 +79,29 @@ How Signals work (Zoneless Concept): Signals are wrappers around values that not
 - New Way ( input() Signal): The parent updates the Signal. The Signal instantly notifies the specific text node in the DOM that depends on it. The DOM updates. (No global tree walking, no Zone.js required).
 
 ----------------
+
+#The Direct Equivalents of rxjs combineLatest and withLatestFrom
+1. combineLatest Equivalent: computed() Angular Signals Documentation
+   In RxJS, combineLatest triggers whenever any of its source observables emit.In Signals, computed() does exactly this. Any signal you call inside computed() becomes a tracked dependency. If any dependency changes, the computed signal re-evaluates.
+2. withLatestFrom Equivalent: untracked() Angular Signals Documentation
+      in RxJS, withLatestFrom allows a primary stream to trigger an action while pulling the latest value from a secondary stream without that secondary stream triggering the emission.In Signals, you achieve this by wrapping the secondary signal inside untracked(). This reads the signal's current value but explicitly tells Angular's reactive graph not to track it as a dependency.
+
+Example
+1. computed() 
+const firstName = signal('Ratheesh');
+const lastName = signal('Kumar');
+// Re-runs whenever EITHER firstName OR lastName changes
+const fullName = computed(() => `${firstName()} ${lastName()}`);
+
+firstName.set('Sinthiya'); // trigger
+lastName.set('Sinthiya'); // trigger
+
+2. untracked
+
+const firstName = signal('Ratheesh');
+const lastName = signal('Kumar');
+const fullName = computed(() => {
+                     return `${firstName()} ${untracked(() => lastName())}`
+                  })
+
+  lastName.set('Attoor'); // compute untracked the lastName dependency change. hence no update             

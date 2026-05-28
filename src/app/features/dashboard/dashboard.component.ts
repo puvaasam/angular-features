@@ -75,7 +75,7 @@ export class DashboardComponent {
     this.globalAction.set('decrement');
     this.actionTick.update((value) => value + 1);
   }
-
+  // onDiscountClaimed function invoked from the child component using output reference.emit()
   protected onDiscountClaimed(finalPrice: number): void {
     this.claimedDiscount.set(finalPrice);
   }

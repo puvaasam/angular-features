@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User, UserPayload, UserRole } from '../../models/user.model';
 import { UserService } from '../../services/user.service';
+import { ActivatedRoute } from '@angular/router';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-user-management',
@@ -13,9 +15,21 @@ import { UserService } from '../../services/user.service';
 export class UserManagementComponent {
   private readonly userService = inject(UserService);
   private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly users = signal<User[]>([]);
-  protected readonly isLoading = signal(false);
+  private readonly refreshTrigger = signal(0);
+  /*
+    protected readonly users = signal < User []>( this.route.snapshot.data['users'] ??[]);
+*/
+  protected readonly usersResource = rxResource({
+    defaultValue: this.route.snapshot.data['users'] as User[] ?? [],
+    params: () => ({ refresh: this.refreshTrigger() }),
+    stream: () => this.userService.getAll()
+  });
+
+  //protected readonly users = computed<User[]>(() => this.usersResource.value() as User[] ?? []);
+  protected readonly isLoading = this.usersResource.isLoading;
   protected readonly errorMessage = signal('');
   protected readonly editingUserId = signal<number | null>(null);
   protected readonly buttonLabel = computed(() =>
@@ -31,10 +45,6 @@ export class UserManagementComponent {
     role: this.fb.nonNullable.control<UserRole>('Standard', [Validators.required])
   });
 
-  constructor() {
-    this.loadUsers();
-  }
-
   protected onSubmit(): void {
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
@@ -46,20 +56,24 @@ export class UserManagementComponent {
 
     const activeId = this.editingUserId();
     if (activeId === null) {
-      this.userService.create(payload).subscribe({
+      this.userService.create(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
         next: () => {
           this.userForm.reset();
-          this.loadUsers();
+          this.refreshTrigger.update(v => v + 1);
         },
         error: () => this.errorMessage.set('Unable to create user. Please try again.')
       });
       return;
     }
 
-    this.userService.update({ userId: activeId, ...payload }).subscribe({
+    this.userService.update({ userId: activeId, ...payload })
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: () => {
         this.cancelEdit();
-        this.loadUsers();
+        this.refreshTrigger.update(v => v + 1);
       },
       error: () => this.errorMessage.set('Unable to update user. Please try again.')
     });
@@ -93,12 +107,14 @@ export class UserManagementComponent {
       return;
     }
 
-    this.userService.delete(id).subscribe({
+    this.userService.delete(id)
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: () => {
         if (this.editingUserId() === id) {
           this.cancelEdit();
         }
-        this.loadUsers();
+        this.refreshTrigger.update(v => v + 1);
       },
       error: () => this.errorMessage.set('Unable to delete user. Please try again.')
     });
@@ -112,23 +128,5 @@ export class UserManagementComponent {
   protected hasFieldError(field: keyof UserPayload): boolean {
     const control = this.userForm.controls[field];
     return control.invalid && (control.dirty || control.touched);
-  }
-
-  private loadUsers(): void {
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-
-    this.userService.getAll().subscribe({
-      next: (users) => {
-        this.users.set(users);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.errorMessage.set(
-          'Unable to load users from API. Ensure backend is running on port 8098.'
-        );
-        this.isLoading.set(false);
-      }
-    });
   }
 }

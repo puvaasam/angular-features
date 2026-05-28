@@ -13,4 +13,5 @@ export class DiscountWidgetComponent {
 
   // Signal output (Replaces @Output() + EventEmitter)
   apply = output<number>();
+  // <app-discount-widget [price]="150" (apply)="onDiscountClaimed($event)" /> -  copied from parent component
 }

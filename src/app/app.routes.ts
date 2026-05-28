@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { userListResolver } from './core/resolver/userListResolver';
 
 export const routes: Routes = [
   {
@@ -20,6 +21,7 @@ export const routes: Routes = [
     path: 'registration',
     canActivate: [authGuard],
     data: { role: 'Admin' },
+    resolve: {users: userListResolver},
     loadComponent: () =>
       import('./features/users/user-management.component').then(
         (m) => m.UserManagementComponent

@@ -80,7 +80,7 @@
     @defer(on viewport) {
         @if (isLoading()) {
         <p>Loading users...</p>
-      } @else if (users().length === 0) {
+      } @else if (usersResource.value().length === 0) {
         <p>No users available.</p>
       } @else {
         <div class="table-wrapper">
@@ -97,7 +97,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (user of users(); track user.userId ?? user.firstName) {
+              @for (user of usersResource.value(); track user.userId ?? user.firstName) {
                 <tr>
                   <td>{{ user.firstName }} {{ user.lastName }}</td>
                   <td>{{ user.gender }}</td>
