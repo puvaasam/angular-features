@@ -41,8 +41,7 @@ export class UserManagementComponent {
     lastName: ['', [Validators.required, Validators.minLength(2)]],
     gender: this.fb.nonNullable.control<'Male' | 'Female'>('Male', [Validators.required]),
     password: ['', [Validators.required, Validators.minLength(6)]],
-    addressId: [0, [Validators.required, Validators.min(1)]],
-    role: this.fb.nonNullable.control<UserRole>('Standard', [Validators.required])
+    addressId: [0, [Validators.required, Validators.min(1)]]
   });
 
   protected onSubmit(): void {
@@ -91,8 +90,7 @@ export class UserManagementComponent {
       lastName: user.lastName,
       gender: user.gender,
       password: user.password,
-      addressId: user.addressId,
-      role: user.role
+      addressId: user.addressId
     });
   }
 

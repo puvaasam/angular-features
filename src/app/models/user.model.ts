@@ -7,7 +7,6 @@ export interface User {
   gender: 'Male' | 'Female';
   password: string;
   addressId: number;
-  role: UserRole;
 }
 
 export type UserPayload = Omit<User, 'userId'>;

@@ -54,7 +54,7 @@
       @if (hasFieldError('addressId')) {
         <small class="error">Address ID should be a number greater than 0.</small>
       }
-
+   <!--
       <label>
         Role
         <select formControlName="role">
@@ -65,7 +65,7 @@
       @if (hasFieldError('role')) {
         <small class="error">Role is required.</small>
       }
-
+-->
       <div class="actions">
         <button type="submit">{{ buttonLabel() }}</button>
         @if (editingUserId() !== null) {
