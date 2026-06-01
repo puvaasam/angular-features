@@ -23,7 +23,7 @@ export class UserManagementComponent {
     protected readonly users = signal < User []>( this.route.snapshot.data['users'] ??[]);
 */
   protected readonly usersResource = rxResource({
-    defaultValue: this.route.snapshot.data['users'] as User[] ?? [],
+    defaultValue: this.route.snapshot.data['users'] as User[] ?? [], // access all users data from resolver guard
     params: () => ({ refresh: this.refreshTrigger() }),
     stream: () => this.userService.getAll()
   });

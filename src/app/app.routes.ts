@@ -37,6 +37,22 @@ export const routes: Routes = [
       ) // Placeholder for Fee
   },
   {
+    path: 'model-signal',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/model-signal/2way-binding-with-model-signal.component').then(
+        (m) => m.TwoWayBindingWithModelSignalComponent
+      )
+  },
+  {
+    path: 'linked-signal-example',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/linked-signal-example/linked-signal-example.component').then(
+        (m) => m.LinkedSignalExampleComponent
+      )
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'

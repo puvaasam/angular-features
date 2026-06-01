@@ -105,3 +105,6 @@ const fullName = computed(() => {
                   })
 
   lastName.set('Attoor'); // compute untracked the lastName dependency change. hence no update             
+
+model signal - combine input signal and output Signal
+linked signal - to creates a two-way connection between a signal and an external data source.

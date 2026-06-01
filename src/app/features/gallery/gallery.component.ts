@@ -13,7 +13,10 @@ interface GalleryImage {
 })
 export class GalleryComponent {
   
-
+  /*
+    resource to load data from promise.
+    rxResource to load data from stream.
+  */
   protected readonly galleryResource = resource<GalleryImage[], unknown>({
     loader: async () => {
       const response = await fetch('/mock/images.json');

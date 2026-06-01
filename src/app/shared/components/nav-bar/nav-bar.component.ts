@@ -27,6 +27,12 @@ import { AuthService } from '../../../services/auth.service';
               </li>
             }
             <li>
+              <a routerLink="/model-signal" routerLinkActive="active">Model Signal</a>
+            </li>
+            <li>
+              <a routerLink="/linked-signal-example" routerLinkActive="active">Linked Signal</a>
+            </li>
+            <li>
               <button class="logout-btn" (click)="authService.logout()">Logout</button>
             </li>
           </ul>
