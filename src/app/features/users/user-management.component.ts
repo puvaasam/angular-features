@@ -24,12 +24,11 @@ export class UserManagementComponent {
 */
   protected readonly usersResource = rxResource({
     defaultValue: this.route.snapshot.data['users'] as User[] ?? [], // access all users data from resolver guard
-    params: () => ({ refresh: this.refreshTrigger() }),
+    params: () => this.refreshTrigger(),
     stream: () => this.userService.getAll()
   });
 
   //protected readonly users = computed<User[]>(() => this.usersResource.value() as User[] ?? []);
-  protected readonly isLoading = this.usersResource.isLoading;
   protected readonly errorMessage = signal('');
   protected readonly editingUserId = signal<number | null>(null);
   protected readonly buttonLabel = computed(() =>

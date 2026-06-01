@@ -1,0 +1,43 @@
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-section {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.search-input {
+  flex: 1;
+  max-width: 400px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px 0;
+}
+
+.error {
+  padding: 16px;
+  background-color: #ffebee;
+  color: #b71c1c;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+.order-details {
+  h3 {
+    margin-bottom: 24px;
+  }
+}
+
+.detail-card {
+  margin-bottom: 16px;
+}

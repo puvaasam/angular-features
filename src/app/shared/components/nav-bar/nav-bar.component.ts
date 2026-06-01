@@ -23,7 +23,7 @@ import { AuthService } from '../../../services/auth.service';
                 <a routerLink="/registration" routerLinkActive="active">Registration</a>
               </li>
               <li>
-                <a routerLink="/fee" routerLinkActive="active">Fee</a>
+                <a routerLink="/order-details" routerLinkActive="active">Order details</a>
               </li>
             }
             <li>

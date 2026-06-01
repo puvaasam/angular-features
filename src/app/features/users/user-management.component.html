@@ -78,7 +78,7 @@
   <section class="panel">
     <h2>All Users</h2>
     @defer(on viewport) {
-        @if (isLoading()) {
+        @if (usersResource.isLoading()) {
         <p>Loading users...</p>
       } @else if (usersResource.value().length === 0) {
         <p>No users available.</p>
