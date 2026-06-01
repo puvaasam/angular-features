@@ -28,13 +28,13 @@ export const routes: Routes = [
       )
   },
   {
-    path: 'fee',
+    path: 'order-details',
     canActivate: [authGuard],
     data: { role: 'Admin' },
     loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then(
-        (m) => m.DashboardComponent
-      ) // Placeholder for Fee
+      import('./features/order-details/order-details.component').then(
+        (m) => m.OrderDetailsComponent
+      )
   },
   {
     path: 'model-signal',
